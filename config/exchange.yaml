@@ -1,0 +1,28 @@
+exchange:
+  name: binance
+  market_type: spot
+  testnet: true  # paper trading
+
+api:
+  rate_limit_requests_per_second: 10
+  timeout_seconds: 30
+  max_retries: 3
+
+security:
+  withdrawals_off: true
+  ip_whitelist_required: true
+  symbol_whitelist_required: true
+
+symbols:
+  tier_1:
+    - BTC/USDT
+    - ETH/USDT
+  tier_2:  # After 6mo profitable
+    - SOL/USDT
+    - BNB/USDT
+  tier_3:  # After >$10k capital
+    - XRP/USDT
+    - ADA/USDT
+    - AVAX/USDT
+    - DOT/USDT
+    - MATIC/USDT

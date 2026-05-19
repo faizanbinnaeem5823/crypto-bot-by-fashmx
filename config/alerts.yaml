@@ -1,0 +1,37 @@
+alert_channels:
+  slack:
+    enabled: true
+    webhook_url: ${SLACK_WEBHOOK_URL}
+    levels: [critical, error, warning]
+
+  discord:
+    enabled: true
+    webhook_url: ${DISCORD_WEBHOOK_URL}
+    levels: [critical, error]
+
+  email:
+    enabled: true
+    smtp_host: ${ALERT_EMAIL_SMTP_HOST}
+    smtp_port: ${ALERT_EMAIL_SMTP_PORT}
+    username: ${ALERT_EMAIL_USERNAME}
+    password: ${ALERT_EMAIL_PASSWORD}
+    to: ${ALERT_EMAIL_TO}
+    levels: [critical]
+
+alert_rules:
+  kill_switch_triggered:
+    severity: critical
+    channels: [slack, discord, email]
+
+  daily_limit_breach:
+    severity: error
+    channels: [slack, discord]
+
+  reconciliation_drift:
+    severity: warning
+    channels: [slack]
+
+  heartbeat_stale:
+    severity: warning
+    channels: [slack]
+    threshold_seconds: 120

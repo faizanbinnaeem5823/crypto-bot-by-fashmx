@@ -1,0 +1,96 @@
+# =============================================================================
+# Prometheus Configuration - Crypto Trading Bot Monitoring
+# =============================================================================
+# Scrapes metrics from:
+#   - Prometheus itself
+#   - Freqtrade Bot A & Bot B
+#   - PostgreSQL Exporter (future)
+#   - Redis Exporter (future)
+# =============================================================================
+
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+
+  external_labels:
+    cluster: 'cryptobot'
+    replica: '{{.ExternalURL}}'
+
+# Alertmanager configuration (placeholder for future alerts)
+alerting:
+  alertmanagers: []
+
+# Rule files for alerts and recording rules
+rule_files: []
+
+# Scrape configurations
+scrape_configs:
+  # ---------------------------------------------------------------------------
+  # Prometheus Self-Monitoring
+  # ---------------------------------------------------------------------------
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+          env: 'production'
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # Freqtrade Bot A - Conservative (15m-4h timeframe)
+  # ---------------------------------------------------------------------------
+  - job_name: 'freqtrade-bot-a'
+    static_configs:
+      - targets: ['bot-a:8080']
+        labels:
+          bot_id: 'bot_a'
+          timeframe: '15m-4h'
+          strategy: 'conservative'
+          env: 'production'
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # Freqtrade Bot B - Experimental (5m-15m timeframe)
+  # ---------------------------------------------------------------------------
+  - job_name: 'freqtrade-bot-b'
+    static_configs:
+      - targets: ['bot-b:8080']
+        labels:
+          bot_id: 'bot_b'
+          timeframe: '5m-15m'
+          strategy: 'experimental'
+          env: 'production'
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Exporter
+  # ---------------------------------------------------------------------------
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgres'
+          env: 'production'
+    metrics_path: /metrics
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # ---------------------------------------------------------------------------
+  # Redis Exporter
+  # ---------------------------------------------------------------------------
+  - job_name: 'redis-exporter'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+          env: 'production'
+    metrics_path: /metrics
+    scrape_interval: 30s
+    scrape_timeout: 10s

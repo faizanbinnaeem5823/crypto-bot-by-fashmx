@@ -1,0 +1,67 @@
+# =============================================================================
+# CRYPTO BOT - Pre-Commit Configuration
+# =============================================================================
+# Install: pre-commit install
+# Run all: pre-commit run --all-files
+# =============================================================================
+
+# Prevent giant files from being committed (binary blobs)
+default_stages: [pre-commit]
+
+repos:
+  # --- Base hooks (from pre-commit-hooks) -----------------------------------
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      # Trim trailing whitespace from all files
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+
+      # Ensure files end with exactly one newline
+      - id: end-of-file-fixer
+
+      # Validate YAML syntax
+      - id: check-yaml
+
+      # Prevent large files (>1MB) from being committed
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+
+      # Check for merge conflict markers
+      - id: check-merge-conflict
+
+      # Detect private keys
+      - id: detect-private-key
+
+  # --- Secret detection (Yelp/detect-secrets) -------------------------------
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ["--baseline", ".secrets.baseline"]
+        exclude: ".env.example$"
+
+  # --- Ruff: lint + format --------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.2
+    hooks:
+      # Lint with auto-fix
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      # Format
+      - id: ruff-format
+
+  # --- MyPy: static type checking -------------------------------------------
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - pydantic>=2.10.0
+          - pydantic-settings>=2.6.0
+          - types-PyYAML
+          - types-redis
+          - types-requests
+          - types-python-dateutil
+        args: [--strict, --ignore-missing-imports]
+        exclude: "^tests/"

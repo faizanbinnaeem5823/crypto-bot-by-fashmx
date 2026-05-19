@@ -1,0 +1,91 @@
+name: Weekly Backtest
+
+on:
+  schedule:
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Download latest market data
+        run: |
+          echo "Downloading latest OHLCV data for all configured symbols..."
+          if [ -f scripts/download_data.py ]; then
+            python scripts/download_data.py --timeframes 5m 15m 1h 4h --output-dir data/
+          else
+            echo "Data download script not found — skipping data download"
+          fi
+
+      - name: Run backtests across all timeframes
+        run: |
+          echo "Running backtests for all bots and timeframes..."
+          if [ -f scripts/backtest.py ]; then
+            python scripts/backtest.py \
+              --config-dir config/ \
+              --data-dir data/ \
+              --output-dir backtest_results/ \
+              --timeframes 5m 15m 1h 4h \
+              --verbose
+          else
+            echo "Backtest script not found — skipping backtests"
+            mkdir -p backtest_results/
+            echo "No backtest results available — script missing" > backtest_results/README.txt
+          fi
+
+      - name: Upload backtest results as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backtest-results-${{ github.run_id }}
+          path: backtest_results/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Generate backtest summary report
+        id: summary
+        run: |
+          echo "## Weekly Backtest Summary" > backtest_report.md
+          echo "- **Run date:** $(date -u +'%Y-%m-%d %H:%M UTC')" >> backtest_report.md
+          echo "- **Commit:** ${{ github.sha }}" >> backtest_report.md
+          echo "" >> backtest_report.md
+          if [ -f backtest_results/summary.json ]; then
+            echo "### Key Metrics" >> backtest_report.md
+            cat backtest_results/summary.json >> backtest_report.md
+          else
+            echo "_No summary metrics available._" >> backtest_report.md
+          fi
+          cat backtest_report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post summary to PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('backtest_report.md', 'utf8');
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });

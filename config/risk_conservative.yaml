@@ -1,0 +1,37 @@
+risk_profiles:
+  conservative:
+    per_trade_risk_pct: 0.5
+    daily_cap_pct: 1.5
+    weekly_cap_pct: 4.0
+    monthly_cap_pct: 8.0
+    max_drawdown_kill_pct: 20.0
+    position_sizing: fixed_fractional
+
+  experimental:
+    per_trade_risk_pct: 0.3
+    daily_cap_pct: 1.0
+    weekly_cap_pct: 3.0
+    monthly_cap_pct: 6.0
+    max_drawdown_kill_pct: 20.0
+    position_sizing: fixed_fractional
+
+kill_switch:
+  test_interval_days: 30
+  auto_retire_conditions:
+    sharpe_below: 0
+    max_drawdown_pct: 20
+    consecutive_losing_months: 3
+    max_overrides_per_30d: 5
+    max_drift_hours: 24
+
+promotion_gates:
+  bot_a:
+    sharpe_min: 1.2
+    max_drawdown_pct: 15
+    win_rate_min: 50
+    profit_factor_min: 1.4
+  bot_b:
+    sharpe_min: 1.5
+    max_drawdown_pct: 12
+    win_rate_min: 55
+    profit_factor_min: 1.6

@@ -1,0 +1,27 @@
+bot:
+  id: bot_b
+  name: "Bot B - Experimental"
+  timeframe_band: "5m-15m"
+  symbols:
+    - BTC/USDT
+    - ETH/USDT
+  risk_profile: experimental
+  initial_capital_usd: 500
+
+risk:
+  per_trade_risk_pct: 0.3
+  daily_cap_pct: 1.0
+  weekly_cap_pct: 3.0
+  monthly_cap_pct: 6.0
+  max_drawdown_kill_pct: 20.0
+
+strategies:
+  primary:
+    name: EMA_Cross_5_13
+    params:
+      fast_period: 5
+      slow_period: 13
+
+reconciliation:
+  interval_sec: 60
+  max_drift_usd: 1.00

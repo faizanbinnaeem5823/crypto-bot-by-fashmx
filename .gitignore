@@ -1,0 +1,130 @@
+# =============================================================================
+# CRYPTO BOT - .gitignore
+# =============================================================================
+
+# --- Python Artifacts -------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Virtual Environments ---------------------------------------------------
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+pythonenv*
+
+# --- Environment / Secrets (NEVER commit) -----------------------------------
+.env
+.env.local
+.env.*.local
+.env.production
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.der
+.envrc
+
+# --- Data Files -------------------------------------------------------------
+data/
+*.db
+*.duckdb
+*.parquet
+*.csv
+*.jsonl
+*.sqlite
+*.sqlite3
+backtest_results/
+trades/
+
+# --- IDE / Editor -----------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.project
+.pydevproject
+.settings/
+*.code-workspace
+
+# --- OS Files ---------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.temp
+
+# --- Logs -------------------------------------------------------------------
+*.log
+logs/
+log/
+
+# --- Jupyter ----------------------------------------------------------------
+.ipynb_checkpoints/
+*.ipynb
+profile_default/
+ipython_config.py
+
+# --- Docker -----------------------------------------------------------------
+docker-volumes/
+volumes/
+postgres_data/
+redis_data/
+grafana_data/
+prometheus_data/
+
+# --- Testing / Coverage -----------------------------------------------------
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.hypothesis/
+
+# --- Pre-commit / Security --------------------------------------------------
+.pre-commit-cache/
+.baseline.json
+
+# --- freqtrade / Bot specific -----------------------------------------------
+user_data/
+plot/
+
+# --- Documentation build ----------------------------------------------------
+docs/_build/
